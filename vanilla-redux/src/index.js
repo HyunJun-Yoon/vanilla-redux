@@ -1,48 +1,31 @@
 import { createStore } from 'redux';
+const form = document.querySelector('form');
+const input = document.querySelector('input');
+const ul = document.querySelector('ul');
 
-const countModifier = (count = 0, action) => {
-  if (action.type === 'ADD') {
-    return ++count;
-  } else if (action.type === 'SUBTRACT') {
-    return --count;
-  } else {
-    return count;
+const ADD_TODO = 'ADD_TODO';
+const DELETE_TODO = 'DELETE_TODO';
+
+const reducer = (state = [], action) => {
+  switch (action.type) {
+    case ADD_TODO:
+      return [...state, { text: action.text, id: Date.now() }];
+    case DELETE_TODO:
+      return [];
+    default:
+      return state;
   }
 };
 
-const countStore = createStore(countModifier);
+const store = createStore(reducer);
 
-countStore.dispatch({ type: 'ADD' });
-countStore.dispatch({ type: 'ADD' });
-countStore.dispatch({ type: 'ADD' });
-countStore.dispatch({ type: 'ADD' });
-countStore.dispatch({ type: 'ADD' });
-countStore.dispatch({ type: 'SUBTRACT' });
-countStore.dispatch({ type: 'SUBTRACT' });
+store.subscribe(() => console.log(store.getState()));
 
-console.log(countStore.getState());
+const onSubmit = e => {
+  e.preventDefault();
+  const toDo = input.value;
+  input.value = '';
+  store.dispatch({ type: ADD_TODO, text: toDo });
+};
 
-// const add = document.getElementById('add');
-// const subtract = document.getElementById('subtract');
-// const number = document.querySelector('span');
-
-// let count = 0;
-
-// number.innerText = count;
-
-// const updateText = () => {
-//   number.innerText = count;
-// };
-
-// const handleAdd = () => {
-//   count++;
-//   updateText();
-// };
-
-// const handleSubtract = () => {
-//   count--;
-//   updateText();
-// };
-
-// add.addEventListener('click', handleAdd);
-// subtract.addEventListener('click', handleSubtract);
+form.addEventListener('submit', onSubmit);
